@@ -280,24 +280,17 @@ function scheduleFakeWin() {
 // first one appears quickly
 setTimeout(showFakeWin, 2500);
 scheduleFakeWin();
-const promoCopy = document.getElementById('promoCopy');
 
-if (promoCopy) {
+function copyPromo() {
+  navigator.clipboard.writeText("XMONEY77");
 
-  promoCopy.addEventListener('click', async () => {
+  const btn = document.querySelector(".copy-btn");
 
-    await navigator.clipboard.writeText('XMONEY77');
+  if (!btn) return;
 
-    const promoText = document.getElementById('promoText');
+  btn.innerHTML = "COPIED ✓";
 
-    const old = promoText.innerHTML;
-
-    promoText.innerHTML = 'COPIAT ✓';
-
-    setTimeout(() => {
-      promoText.innerHTML = old;
-    }, 1500);
-
-  });
-
+  setTimeout(() => {
+    btn.innerHTML = "COPY";
+  }, 1500);
 }
