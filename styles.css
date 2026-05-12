@@ -2207,3 +2207,7 @@ margin: 12px !important;
 
   flex-shrink: 0 !important;
 }
+#promoCopy:hover {
+  transform: scale(1.03);
+  opacity: 0.95;
+}
