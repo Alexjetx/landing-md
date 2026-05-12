@@ -47,7 +47,9 @@
         i
       </button>
 
-      <div style="
+      <div 
+      id="timer"
+      style="
 width:68px;
 height:42px;
 border-radius:16px;
@@ -56,8 +58,9 @@ display:flex;
 align-items:center;
 justify-content:center;
 color:#ff6f6f;
-font-weight:800;
-font-size:20px;
+font-weight:700;
+font-size:18px;
+letter-spacing:-1px;
 background:rgba(15,15,15,.85);
 flex-shrink:0;
 ">
@@ -221,230 +224,7 @@ flex-shrink:0;
 
 </details>
   </main>
-
-
-  <script>
-    (function () {
-
-      const flags = [
-        '🇺🇸',
-        '🇬🇧',
-        '🇮🇳',
-        '🇪🇸',
-        '🇫🇷',
-        '🇮🇹',
-        '🇺🇿',
-        '🇹🇯',
-        '🇦🇪',
-        '🇩🇪',
-        '🇧🇷',
-        '🇲🇽'
-      ];
-
-      let audioUnlocked = false;
-      let audioCtx = null;
-
-      function rand(min, max) {
-        return Math.floor(
-          Math.random() * (max - min + 1)
-        ) + min;
-      }
-
-      function unlockAudio() {
-
-        if (audioUnlocked) return;
-
-        audioUnlocked = true;
-
-        try {
-
-          audioCtx = new (
-            window.AudioContext ||
-            window.webkitAudioContext
-          )();
-
-          if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-          }
-
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-
-          osc.frequency.value = 660;
-
-          gain.gain.setValueAtTime(
-            0.0001,
-            audioCtx.currentTime
-          );
-
-          gain.gain.exponentialRampToValueAtTime(
-            0.025,
-            audioCtx.currentTime + 0.01
-          );
-
-          gain.gain.exponentialRampToValueAtTime(
-            0.0001,
-            audioCtx.currentTime + 0.12
-          );
-
-          osc.start();
-
-          osc.stop(audioCtx.currentTime + 0.13);
-
-        } catch (e) {
-          audioCtx = null;
-        }
-      }
-
-      function playJackpotSound() {
-
-        if (!audioUnlocked || !audioCtx) {
-          return;
-        }
-
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-
-        const now = audioCtx.currentTime;
-
-        const gain = audioCtx.createGain();
-
-        gain.connect(audioCtx.destination);
-
-        gain.gain.setValueAtTime(0.0001, now);
-
-        gain.gain.exponentialRampToValueAtTime(
-          0.12,
-          now + 0.03
-        );
-
-        gain.gain.exponentialRampToValueAtTime(
-          0.0001,
-          now + 0.9
-        );
-
-        const notes = [
-          523.25,
-          659.25,
-          783.99,
-          1046.5,
-          1318.5
-        ];
-
-        notes.forEach(function (freq, index) {
-
-          const osc = audioCtx.createOscillator();
-
-          osc.type = 'triangle';
-
-          osc.frequency.setValueAtTime(
-            freq,
-            now + index * 0.09
-          );
-
-          osc.connect(gain);
-
-          osc.start(now + index * 0.09);
-
-          osc.stop(now + index * 0.09 + 0.22);
-        });
-      }
-
-      function showJackpot() {
-
-        const toast =
-          document.getElementById('fakeWinToast');
-
-        const flag =
-          document.getElementById('fakeWinFlag');
-
-        const id =
-          document.getElementById('fakeWinId');
-
-        const amount =
-          document.getElementById('fakeWinAmount');
-
-        if (!toast || !flag || !id || !amount) {
-          return;
-        }
-
-        const win = rand(3000, 12000);
-
-        flag.textContent =
-          flags[rand(0, flags.length - 1)];
-
-        id.textContent =
-          'ID: ' + rand(100, 999) + '***';
-
-        amount.textContent =
-          'CÂȘTIG +$' +
-          win.toLocaleString('en-US');
-
-        toast.classList.remove('is-visible');
-
-        void toast.offsetWidth;
-
-        toast.classList.add('jackpot');
-        toast.classList.add('is-visible');
-
-        playJackpotSound();
-
-        setTimeout(function () {
-          toast.classList.remove('is-visible');
-        }, 4500);
-      }
-
-      function schedule() {
-
-        setTimeout(function () {
-
-          showJackpot();
-
-          schedule();
-
-        }, rand(20000, 35000));
-      }
-
-      document.addEventListener(
-        'click',
-        unlockAudio,
-        { once: true }
-      );
-
-      document.addEventListener(
-        'touchstart',
-        unlockAudio,
-        { once: true }
-      );
-
-      window.showJackpotNow = showJackpot;
-      window.unlockJackpotSound = unlockAudio;
-
-      if (document.readyState === 'loading') {
-
-        document.addEventListener(
-          'DOMContentLoaded',
-          function () {
-
-            setTimeout(showJackpot, 3000);
-
-            schedule();
-          }
-        );
-
-      } else {
-
-        setTimeout(showJackpot, 3000);
-
-        schedule();
-      }
-
-    })();
-  </script>
+ <script defer src="script.js"></script>
 
 </body>
 </html>
